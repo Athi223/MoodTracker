@@ -1,4 +1,5 @@
 import './App.css'
+import loader from './loader.svg'
 import firebase from "firebase/app"
 import "firebase/auth"
 import "firebase/database";
@@ -15,8 +16,7 @@ function createCalendar(date, month) {
 	while(empty--) {
 		month.unshift(null)
 	}
-	let n = month.length
-	n = n + parseInt(7 / 2, 10)
+	let n = month.length + parseInt(7 / 2, 10)
 	n = n - (n % 7)
 	empty = n - month.length
 	while(empty--) {
@@ -27,7 +27,6 @@ function createCalendar(date, month) {
 
 export default function App() {
 	const [ authUser, setAuthUser ] = useState(null)
-	const [ authWasListened, setAuthWasListened ] = useState(false)
 	const [ date, setDate ] = useState(null)
 	const [ calendar, setCalendar ] = useState([])
 	const [ modal, setModal ] = useState(false)
@@ -47,11 +46,9 @@ export default function App() {
 			setDate(new Date())
 			if (user) {
 				setAuthUser(user)
-				setAuthWasListened(true)
 			}
 			else {
-				setAuthUser(null)
-				setAuthWasListened(true)
+				setAuthUser(false)
 			}
 		})
 	}, [])
@@ -69,7 +66,7 @@ export default function App() {
 					setCalendar(createCalendar(date, _month))
 				}
 				else {
-					let _month = Array()
+					let _month = []
 					for(let i=0; i < new Date(date.getFullYear(), date.getMonth()+1, 0).getDate(); ++i) {
 						_month.push((i+1) + ' ')
 					}
@@ -82,7 +79,9 @@ export default function App() {
 	}, [ date, authUser ])
 	
 	return(
-		authWasListened ? (
+		authUser === null ? <div className="App">
+				<img src={loader} className="App-loader" alt="loader" />
+			</div> :
 			<PageWrapper withNavbar>
 				<Navbar>
 					<NavbarContent>
@@ -94,7 +93,7 @@ export default function App() {
 						</NavbarBrand>
 					</NavbarContent>
 					<NavbarContent>
-					<Button onClick={toggleDarkmode}>🌗</Button>
+						<Button onClick={toggleDarkmode}>🌗</Button>
 						<NavbarText>
 							{authUser ? <Button color="danger" onClick={ () => {
 									firebase.auth().signOut().catch(error => console.log(error))
@@ -136,7 +135,5 @@ export default function App() {
 					}
 				</ContentWrapper>
 			</PageWrapper>
-			
-		) : null
 	)
 }

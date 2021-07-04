@@ -6,6 +6,7 @@ import "firebase/database";
 import { useState, useEffect } from "react"
 import Calendar from './Calendar'
 import Mood from './Mood';
+import Progress from './Progress'
 import { PageWrapper, Navbar, ContentWrapper, NavbarContent, NavbarBrand, NavbarText, Button, toggleDarkmode } from "reacthalfmoon";
 import { firebaseConfig } from './credentials'
 
@@ -34,9 +35,7 @@ export default function App() {
 		const year_month = date.getFullYear() + "_" + (date.getMonth() + 1)
 		firebase.database().ref('users/' + authUser.uid).child(year_month).get().then(snapshot => {
 			let current = snapshot.val()
-			let today = current[date.getDate()-1].split(' ')
-			today[1] = mood
-			current[date.getDate()-1] = today.join(' ')
+			current[date.getDate()-1] = mood
 			firebase.database().ref('users/' + authUser.uid).child(year_month).set(current)
 			setModal(false)
 		})
@@ -68,7 +67,7 @@ export default function App() {
 				else {
 					let _month = []
 					for(let i=0; i < new Date(date.getFullYear(), date.getMonth()+1, 0).getDate(); ++i) {
-						_month.push((i+1) + ' ')
+						_month.push('')
 					}
 					setModal(true)
 					dbRef.set({ [year_month]: _month })
@@ -85,10 +84,10 @@ export default function App() {
 			<PageWrapper withNavbar>
 				<Navbar>
 					<NavbarContent>
-						<NavbarBrand>Welcome, {authUser ? authUser.displayName : 'Guest'} 🎉</NavbarBrand>
+						<NavbarBrand>Welcome, {authUser ? authUser.displayName.split(' ')[0] : 'Guest'} 🎉</NavbarBrand>
 					</NavbarContent>
 					<NavbarContent className="mx-auto">
-						<NavbarBrand className="bg-date rounded p-5">
+						<NavbarBrand className="bg-date rounded px-5">
 							{ date.toDateString().split(' ')[1] + ', ' + date.toDateString().split(' ')[3] }
 						</NavbarBrand>
 					</NavbarContent>
@@ -110,27 +109,50 @@ export default function App() {
 						</NavbarText>
 					</NavbarContent>
 				</Navbar>
-				<ContentWrapper>
+				<ContentWrapper className="d-lg-flex justify-content-center align-items-center">
 					{authUser ?
 						<div className="container">							
 							{ calendar.length ? 
 							<div className="row">
-								<div className="col-10 py-5">
-									<Calendar month={calendar} />
-								</div>
-								<div className="col-2 p-5">
-									<div className="d-flex flex-column text-center justify-content-around px-15 h-full border">
-										<h4 className="bg-primary p-10 rounded">Happy</h4>
-										<h4 className="bg-secondary p-10 rounded">Neutral</h4>
-										<h4 className="bg-success p-10 rounded">Amazing</h4>
-										<h4 className="bg-danger p-10 rounded">Sad</h4>
+								<div className="col-12 col-lg-2 p-5">
+									<div className="text-center px-15 border" style={{ height: "60%"}}>
+										<h5 className="amazing p-5 rounded">Amazing 🤩</h5>
+										<h5 className="happy p-5 rounded">Happy 😁</h5>
+										<h5 className="neutral p-5 rounded">Neutral 😐</h5>
+										<h5 className="sad p-5 rounded">Sad 😔</h5>
+										<h5 className="angry p-5 rounded">Angry 😠</h5>
+										<h5 className="lonely p-5 rounded">Lonely 😟</h5>
 									</div>
+									<div className="pt-5" style={{ height: "40%"}}>
+										<Progress progress={calendar} />
+									</div>
+								</div>
+								<div className="col-12 col-lg-10 py-5">
+									<Calendar month={calendar} />
 								</div>
 							</div> : null }
 							<Mood modal={modal} setMood={setMood} />
 						</div> :
 						<div className="container text-center">
+							<ul className="font-size-16 border rounded p-10 mx-auto">
+								<li>Track your daily mood</li>
+								<li>Visualize how your week/month went by</li>
+								<li>Monthly stats for an effortless overview</li>
+								<li>Available in Light/Dark modes</li>
+							</ul>
 							<h2>Please SignIn to use Mood Tracker!</h2>
+							<div className="row">
+								<div className="col-12 col-md-6">
+									<div className="mx-5 box-shadow">
+										<img className="w-full" src="https://i.ibb.co/q0V971r/mood-ask.png" alt="Mood Ask" />
+									</div>
+								</div>
+								<div className="col-12 col-md-6">
+									<div className="mx-5 box-shadow">
+										<img className="w-full" src="https://i.ibb.co/M62WGxK/mood-display.png" alt="Mood Display" />
+									</div>
+								</div>
+							</div>
 						</div>
 					}
 				</ContentWrapper>

@@ -1,12 +1,13 @@
 import parse from 'html-react-parser'
 
 export default function Calendar(props) {
-	let calendar = ''
+	let calendar = '', empty = -1
 	props.month.forEach((day, index) => {
 		if(index%7 === 0) {
 			calendar += '<tr>'
 		}
-		calendar += (day === null ? '<td></td>' : '<td class="bg-' + day.split(' ')[1] + '"><h2>' + day.split(' ')[0] + '</h2></td>')
+        empty += (day === null ? 1 : 0)
+		calendar += (day === null ? '<td></td>' : '<td class="' + day + '"><h2>' + (index-empty) + '</h2></td>')
 		if(index%7 === 6) {
 			calendar += '</tr>'
 		}

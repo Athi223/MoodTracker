@@ -2,10 +2,10 @@ import './App.css'
 import loader from './loader.svg'
 import firebase from "firebase/app"
 import "firebase/auth"
-import "firebase/database";
+import "firebase/database"
 import { useState, useEffect } from "react"
 import Calendar from './Calendar'
-import Mood from './Mood';
+import Mood from './Mood'
 import Progress from './Progress'
 import { PageWrapper, Navbar, ContentWrapper, NavbarContent, NavbarBrand, NavbarText, Button, toggleDarkmode } from "reacthalfmoon";
 import { firebaseConfig } from './credentials'
@@ -84,7 +84,7 @@ export default function App() {
 			<PageWrapper withNavbar>
 				<Navbar>
 					<NavbarContent>
-						<NavbarBrand>Welcome, {authUser ? authUser.displayName.split(' ')[0] : 'Guest'} 🎉</NavbarBrand>
+						<NavbarBrand>Hi, {authUser ? authUser.displayName.split(' ')[0] : 'Guest'} 🎉</NavbarBrand>
 					</NavbarContent>
 					<NavbarContent className="mx-auto">
 						<NavbarBrand className="bg-date rounded px-5">
@@ -104,7 +104,7 @@ export default function App() {
 										firebase.auth().signInWithPopup(provider)
 										.catch(error => console.log(error))
 									}
-								}>Signin with Google</Button>
+								}><i className="fab fa-lg fa-google"></i> Signin</Button>
 							}
 						</NavbarText>
 					</NavbarContent>

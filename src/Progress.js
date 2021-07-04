@@ -1,8 +1,4 @@
 export default function Progress(props) {
-	// const happy = props.progress.reduce((happy, elem) => happy + (elem === 'primary') , 0)
-	// const neutral = props.progress.reduce((neutral, elem) => neutral + (elem === 'secondary') , 0)
-	// const amazing = props.progress.reduce((amazing, elem) => amazing + (elem === 'success') , 0)
-	// const sad = props.progress.reduce((sad, elem) => sad + (elem === 'danger') , 0)
 	let progresses = props.progress.reduce((progresses, elem) => {
 		if(elem === 'amazing') {
 			progresses[0] += 1
@@ -10,12 +6,12 @@ export default function Progress(props) {
 		if(elem === 'happy') {
 			progresses[1] += 1
 		}
-		if(elem === 'neutral') {
-			progresses[2] += 1
-		}
-		if(elem === 'sad') {
-			progresses[3] += 1
-		}
+		if(elem === 'neutral') {									// Count the number of 'amazing',
+			progresses[2] += 1										// 'happy', 'neutral', 'sad',
+		}															// 'angry', 'lonely' in current
+		if(elem === 'sad') {										// month to show progress bar for
+			progresses[3] += 1										// each one, which'll be calculated
+		}															// by (progress/total days)*100
 		if(elem === 'angry') {
 			progresses[4] += 1
 		}
@@ -26,7 +22,6 @@ export default function Progress(props) {
 	} , [ 0, 0, 0, 0, 0, 0 ])
 	const total = props.progress.reduce((total, elem) => total + (typeof elem === 'string') , 0)
 	progresses = progresses.map(value => (value/total*100).toFixed(0)+"%")
-	console.log(progresses)
 	return(
 		<div className="d-flex flex-column text-center justify-content-around border p-5 h-full">
 			<h5><b><u>Monthly Stats</u></b></h5>

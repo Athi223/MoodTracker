@@ -34,44 +34,46 @@ export default function App() {
 	const setMood = function(mood) {
 		const year_month = date.getFullYear() + "_" + (date.getMonth() + 1)
 		firebase.database().ref('users/' + authUser.uid).child(year_month).get().then(snapshot => {
-			let current = snapshot.val()
-			current[date.getDate()-1] = mood
+			let current = snapshot.val()							// Get data of current month
+			current[date.getDate()-1] = mood						// Update mood for current day
 			firebase.database().ref('users/' + authUser.uid).child(year_month).set(current)
 			setModal(false)
 		})
 	}
+	const toggle = function(direction) {
+		let temp_date = new Date(date)								// Make a Copy of 'date' state
+		temp_date.setMonth(date.getMonth() + (direction ? +1 : -1))	// Add/Subtract a month from it
+		setDate(temp_date)											// Set the new date
+	}
 	useEffect(() => {
 		firebase.auth().onAuthStateChanged((user) => {
-			setDate(new Date())
-			if (user) {
-				setAuthUser(user)
-			}
-			else {
-				setAuthUser(false)
-			}
+			setDate(new Date())										// Set default date as today
+			setAuthUser((user ? user : false))						// Set user if logged in else false
 		})
 	}, [])
 
 	useEffect(() => {
 		if(authUser) {
-			const year_month = date.getFullYear() + "_" + (date.getMonth() + 1)
-			var dbRef = firebase.database().ref('users/' + authUser.uid)
+			const year_month = date.getFullYear() + "_" + (date.getMonth() + 1)		// YYYY_M format
+			var dbRef = firebase.database().ref('users/' + authUser.uid)			// User's doc in db
 			dbRef.child(year_month).on('value', snapshot => {
-				if(snapshot.exists()) {
+				if(snapshot.exists()) {								// If data exists, work on it
 					let _month = snapshot.val()
-					if(_month[date.getDate()-1].length < 4) {
-						setModal(true)
+					if(date.getMonth() === new Date().getMonth() && date.getFullYear() === new Date().getFullYear()) {
+						setModal(_month[date.getDate()-1] === '')	// Ask mood if empty mood for today
 					}
-					setCalendar(createCalendar(date, _month))
+					setCalendar(createCalendar(date, _month))		// Set the actual calendar
 				}
-				else {
+				else {												// If data doesn't exist, create it
 					let _month = []
 					for(let i=0; i < new Date(date.getFullYear(), date.getMonth()+1, 0).getDate(); ++i) {
-						_month.push('')
+						_month.push('')								// Generate each day with empty mood
 					}
-					setModal(true)
-					dbRef.set({ [year_month]: _month })
-					setCalendar(createCalendar(date, _month))
+					if(date.getMonth() === new Date().getMonth() && date.getFullYear() === new Date().getFullYear()) {
+						setModal(true)		// Ask mood if creating new data for current month (1st day)
+					}
+					dbRef.update({ [year_month]: _month })			// Store created month data in db
+					setCalendar(createCalendar(date, _month))		// Set the actual calendar
 				}
 			})
 		}
@@ -87,24 +89,33 @@ export default function App() {
 						<NavbarBrand>Hi, {authUser ? authUser.displayName.split(' ')[0] : 'Guest'} 🎉</NavbarBrand>
 					</NavbarContent>
 					<NavbarContent className="mx-auto">
-						<NavbarBrand className="bg-date rounded px-5">
-							{ date.toDateString().split(' ')[1] + ', ' + date.toDateString().split(' ')[3] }
+						<button onClick={
+							() => toggle(false)
+						} className="btn btn-link px-5"><i className="fas fa-lg fa-chevron-circle-left"></i></button>
+						<NavbarBrand className="bg-date rounded m-0 px-5">
+							{ date.toDateString().split(' ')[1] + ', ' + date.toDateString().split(' ')[3].substring(2,4) }
 						</NavbarBrand>
+						<button onClick={
+							() => toggle(true)
+						} className="btn btn-link px-5" disabled={
+							date.getMonth() === new Date().getMonth() && date.getFullYear() === new Date().getFullYear()
+						}><i className="fas fa-lg fa-chevron-circle-right"></i></button>
 					</NavbarContent>
 					<NavbarContent>
 						<Button onClick={toggleDarkmode}>🌗</Button>
 						<NavbarText>
-							{authUser ? <Button color="danger" onClick={ () => {
-									firebase.auth().signOut().catch(error => console.log(error))
-								}
-							}>Signout</Button> : 
+							{authUser ? <Button color="danger" onClick={
+									() => {
+										firebase.auth().signOut().catch(error => console.log(error))
+									}
+								}><i className="fas fa-sign-out-alt"></i></Button> : 
 								<Button color="success" onClick={
 									() => {
 										const provider = new firebase.auth.GoogleAuthProvider()
 										firebase.auth().signInWithPopup(provider)
 										.catch(error => console.log(error))
 									}
-								}><i className="fab fa-lg fa-google"></i> Signin</Button>
+								}><i className="fab fa-lg fa-google"></i></Button>
 							}
 						</NavbarText>
 					</NavbarContent>

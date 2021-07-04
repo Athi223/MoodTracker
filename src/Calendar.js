@@ -4,12 +4,12 @@ export default function Calendar(props) {
 	let calendar = '', empty = -1
 	props.month.forEach((day, index) => {
 		if(index%7 === 0) {
-			calendar += '<tr>'
+			calendar += '<tr>'						// Add row when it reaches row start (logically)
 		}
-        empty += (day === null ? 1 : 0)
+		empty += (day === null ? 1 : 0)				// Count the empty blocks to fill dates by index
 		calendar += (day === null ? '<td></td>' : '<td class="' + day + '"><h2>' + (index-empty) + '</h2></td>')
 		if(index%7 === 6) {
-			calendar += '</tr>'
+			calendar += '</tr>'						// End row when it reaches row end (logically)
 		}
 	})
 	return(

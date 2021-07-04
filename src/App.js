@@ -155,12 +155,12 @@ export default function App() {
 							<div className="row">
 								<div className="col-12 col-md-6">
 									<div className="mx-5 box-shadow">
-										<img className="w-full" src="https://i.ibb.co/q0V971r/mood-ask.png" alt="Mood Ask" />
+										<img className="w-full" src="https://i.ibb.co/kH2D4y3/mood-ask.png" alt="Mood Ask" />
 									</div>
 								</div>
 								<div className="col-12 col-md-6">
 									<div className="mx-5 box-shadow">
-										<img className="w-full" src="https://i.ibb.co/M62WGxK/mood-display.png" alt="Mood Display" />
+										<img className="w-full" src="https://i.ibb.co/yNBfxXK/mood-display.png" alt="Mood Display" />
 									</div>
 								</div>
 							</div>

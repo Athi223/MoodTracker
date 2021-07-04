@@ -13,11 +13,11 @@ A simple React app to track your daily mood
 
 ### Set Daily Mood
 
-![Daily Mood](https://i.ibb.co/q0V971r/mood-ask.png)
+![Daily Mood](https://i.ibb.co/kH2D4y3/mood-ask.png)
 
 ### Track Monthly Mood
 
-![Monthly Mood](https://i.ibb.co/M62WGxK/mood-display.png)
+![Monthly Mood](https://i.ibb.co/yNBfxXK/mood-display.png)
 
 ## Framworks and Libraries
 
